@@ -1,5 +1,5 @@
 import threading
-from google.cloud import vision
+from google.cloud import vision, storage
 
 
 def extract_arguments(request):
@@ -16,12 +16,8 @@ def extract_arguments(request):
     return bucket, filenames
 
 
-def text_detection(bucket, filename):
-    print(f"Instantiating client for {filename}.")
-    client = vision.ImageAnnotatorClient()
-
-    print(f"Looking for text in {filename}.")
-    image = vision.Image({'source': {'image_uri': f"gs://{bucket}/{filename}"}})
+def text_detection(client, bucket, filename):
+    image = vision.Image({'source': {'image_uri': f"gs://{bucket}/img/{filename}"}})
     text_detection_response = client.text_detection(image=image)
     annotations = text_detection_response.text_annotations
 
@@ -29,7 +25,27 @@ def text_detection(bucket, filename):
         text = annotations[0].description
     else:
         text = ""
+
+    return text
+
+
+def store_output(client, bucket_name, filename, text):
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(f"output/{filename}.txt")
+    blob.upload_from_string(text)
+
+
+def process_one_image(bucket, filename):
+    print(f"Instantiating clients for {filename}.")
+    vision_client = vision.ImageAnnotatorClient()
+    storage_client = storage.Client()
+
+    print(f"Looking for text in {filename}.")
+    text = text_detection(vision_client, bucket, filename)
     print(f"Extracted text {text} ({len(text)} chars) from {filename}.")
+
+    print(f"Storing text in output file")
+    store_output(storage_client, bucket, filename, text)
 
 
 def main(request):
