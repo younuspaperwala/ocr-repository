@@ -53,7 +53,7 @@ def main(request):
     bucket, filenames = extract_arguments(request)
 
     # Create threads to process batch
-    threads = [threading.Thread(target=text_detection, args=(bucket, filename))
+    threads = [threading.Thread(target=process_one_image, args=(bucket, filename))
                for filename in filenames]
 
     # Start threads
