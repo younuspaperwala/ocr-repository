@@ -39,7 +39,5 @@ def main(bucket, filenames):
     print("Batch processing complete.")
 
 
-
-
 if __name__ == '__main__':
     main()
