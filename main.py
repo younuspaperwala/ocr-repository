@@ -49,8 +49,4 @@ def main(request):
         thread.join()
 
     # Complete
-    print("Batch processing complete.")
-
-
-if __name__ == '__main__':
-    main()
+    return "Batch processing complete."
