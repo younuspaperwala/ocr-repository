@@ -2,6 +2,20 @@ import threading
 from google.cloud import vision
 
 
+def extract_arguments(request):
+    request_json = request.get_json(silent=True)
+    request_args = request.args
+
+    if request_json and 'bucket' in request_json and 'filenames' in request_json:
+        bucket = request_json['bucket']
+        filenames = request_json['filenames']
+    elif request_args and 'bucket' in request_args and 'filenames' in request_json:
+        bucket = request_args['bucket']
+        filenames = request_args['filenames']
+
+    return bucket, filenames
+
+
 def text_detection(bucket, filename):
     print(f"Instantiating client for {filename}.")
     client = vision.ImageAnnotatorClient()
@@ -18,7 +32,10 @@ def text_detection(bucket, filename):
     print(f"Extracted text {text} ({len(text)} chars) from {filename}.")
 
 
-def main(bucket, filenames):
+def main(request):
+    # Extract the arguments
+    bucket, filenames = extract_arguments(request)
+
     # Create threads to process batch
     threads = [threading.Thread(target=text_detection, args=(bucket, filename))
                for filename in filenames]
