@@ -1,9 +1,5 @@
-import os
 import threading
-
 from google.cloud import vision
-
-project_id = os.environ["essential-text-330923"]
 
 
 def text_detection(bucket, filename):
