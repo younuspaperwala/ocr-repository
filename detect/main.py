@@ -1,4 +1,4 @@
-from google.cloud import vision, storage, pubsub
+from google.cloud import vision, storage
 
 from message_package import unpack_message
 
