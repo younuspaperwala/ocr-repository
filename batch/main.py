@@ -7,9 +7,10 @@ from message_package import pack_message
 
 # Request format may be specific to Google
 def extract_arguments(request):
-    request_json = request.get_json(silent=True)
+    request_struct = request.get_json(silent=True)
+    data = request_struct['data']
 
-    return request_json['bucket'], request_json['filenames'], request_json['is_processing_on']
+    return data['bucket'], data['filenames'], data['is_processing_on']
 
 
 def select_publish_topic(is_processing_on):
