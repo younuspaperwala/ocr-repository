@@ -8,28 +8,8 @@ from message_package import pack_message
 # Request format may be specific to Google
 def extract_arguments(request):
     request_json = request.get_json(silent=True)
-    request_args = request.args
 
-    print(request_json)
-    print(request_args)
-
-    has_all_args = lambda args: all(a in args for a in ('bucket', 'filenames', 'is_processing_on'))
-
-    if request_json and has_all_args(request_json):
-        bucket = request_json['bucket']
-        filenames = request_json['filenames']
-        is_processing_on = request_json['is_processing_on']
-    elif request_args and has_all_args(request_args):
-        bucket = request_json['bucket']
-        filenames = request_json['filenames']
-        is_processing_on = request_json['is_processing_on']
-    else:
-        print("Default hard-coded values used because json extraction failed.")
-        bucket = 'ocr-orionlowy'
-        filenames = ["00_00.jpg", "00_01.jpg", "00_02.jpg", "00_03.jpg", "00_04.jpg"]
-        is_processing_on = True
-
-    return bucket, filenames, is_processing_on
+    return request_json['bucket'], request_json['filenames'], request_json['is_processing_on']
 
 
 def select_publish_topic(is_processing_on):
@@ -40,7 +20,7 @@ def select_publish_topic(is_processing_on):
 def load_image(bucket, filename):
     client = storage.Client()
     return client.get_bucket(bucket) \
-        .blob(filename) \
+        .blob(f"img/{filename}") \
         .download_as_bytes()
 
 
