@@ -5,6 +5,9 @@ from altchars import base64_altchars
 
 
 def pack_message(image, bucket, filename):
+
+    print(image)
+
     message = {'image': base64.b64encode(image, base64_altchars),
                'bucket': bucket,
                'filename': filename}
