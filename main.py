@@ -1,59 +1,54 @@
 import threading
-from google.cloud import vision, storage
+
+from google.cloud import storage, pubsub
+
+from message_package import pack_message
 
 
 def extract_arguments(request):
     request_json = request.get_json(silent=True)
     request_args = request.args
 
-    if request_json and 'bucket' in request_json and 'filenames' in request_json:
-        bucket = request_json['bucket']
-        filenames = request_json['filenames']
-    elif request_args and 'bucket' in request_args and 'filenames' in request_json:
-        bucket = request_args['bucket']
-        filenames = request_args['filenames']
+    has_all_args = lambda args: all(a in args for a in ('bucket', 'filenames', 'image_step_select'))
 
-    return bucket, filenames
+    if request_json and has_all_args(request_json):
+        bucket, filenames, image_step_select = request_json
+    elif request_args and has_all_args(request_args):
+        bucket, filenames, image_step_select = request_args
 
-
-def text_detection(client, bucket, filename):
-    image = vision.Image({'source': {'image_uri': f"gs://{bucket}/img/{filename}"}})
-    text_detection_response = client.text_detection(image=image)
-    annotations = text_detection_response.text_annotations
-
-    if len(annotations) > 0:
-        text = annotations[0].description
-    else:
-        text = ""
-
-    return text
+    return bucket, filenames, image_step_select
 
 
-def store_output(client, bucket_name, filename, text):
-    bucket = client.get_bucket(bucket_name)
-    blob = bucket.blob(f"output/{filename}.txt")
-    blob.upload_from_string(text)
+def select_publish_topic(is_processing_on):
+    return 'ocr-process-pickup' if is_processing_on \
+        else 'ocr_detection_pickup'
 
 
-def process_one_image(bucket, filename):
-    print(f"Instantiating clients for {filename}.")
-    vision_client = vision.ImageAnnotatorClient()
-    storage_client = storage.Client()
+def load_image(bucket, filename):
+    client = storage.Client()
+    return client.get_bucket(bucket) \
+        .blob(filename) \
+        .download_as_bytes()
 
-    print(f"Looking for text in {filename}.")
-    text = text_detection(vision_client, bucket, filename)
-    print(f"Extracted text {text} ({len(text)} chars) from {filename}.")
 
-    print(f"Storing text in output file")
-    store_output(storage_client, bucket, filename, text)
+def load_and_publish(bucket, filename, is_processing_on):
+    # Load image from bucket
+    image = load_image(bucket, filename)
+
+    # Pack image and arguments into a message data object
+    message_data = pack_message(image, bucket, filename)
+
+    pubsub.PublisherClient().publish(topic=select_publish_topic(is_processing_on),
+                                     data=message_data)
 
 
 def main(request):
     # Extract the arguments
-    bucket, filenames = extract_arguments(request)
+    bucket, filenames, image_step_select = extract_arguments(request)
 
     # Create threads to process batch
-    threads = [threading.Thread(target=process_one_image, args=(bucket, filename))
+    threads = [threading.Thread(target=load_and_publish,
+                                args=(bucket, filename, image_step_select))
                for filename in filenames]
 
     # Start threads
@@ -65,4 +60,4 @@ def main(request):
         thread.join()
 
     # Complete
-    return "Batch processing complete."
+    return "All calls batched to image step."
