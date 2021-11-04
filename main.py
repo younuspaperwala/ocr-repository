@@ -9,14 +9,14 @@ def extract_arguments(request):
     request_json = request.get_json(silent=True)
     request_args = request.args
 
-    has_all_args = lambda args: all(a in args for a in ('bucket', 'filenames', 'image_step_select'))
+    has_all_args = lambda args: all(a in args for a in ('bucket', 'filenames', 'is_processing_on'))
 
     if request_json and has_all_args(request_json):
-        bucket, filenames, image_step_select = request_json
+        bucket, filenames, is_processing_on = request_json
     elif request_args and has_all_args(request_args):
-        bucket, filenames, image_step_select = request_args
+        bucket, filenames, is_processing_on = request_args
 
-    return bucket, filenames, image_step_select
+    return bucket, filenames, is_processing_on
 
 
 def select_publish_topic(is_processing_on):
@@ -42,13 +42,13 @@ def load_and_publish(bucket, filename, is_processing_on):
                                      data=message_data)
 
 
-def main(request):
+def start_batch(request):
     # Extract the arguments
-    bucket, filenames, image_step_select = extract_arguments(request)
+    bucket, filenames, is_processing_on = extract_arguments(request)
 
     # Create threads to process batch
     threads = [threading.Thread(target=load_and_publish,
-                                args=(bucket, filename, image_step_select))
+                                args=(bucket, filename, is_processing_on))
                for filename in filenames]
 
     # Start threads
