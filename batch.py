@@ -8,7 +8,7 @@ from message import pack_message, topic_res_name
 
 def select_publish_topic(is_processing_on):
     topic_id = 'ocr-process-pickup' if is_processing_on \
-        else 'ocr_detection_pickup'
+        else 'ocr-detection-pickup'
 
     return topic_res_name(topic_id)
 

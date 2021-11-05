@@ -13,7 +13,7 @@ def process_image(image):
 
 def publish(message):
     pubsub.PublisherClient() \
-        .publish(topic=topic_res_name('ocr_detection_pickup'),
+        .publish(topic=topic_res_name('ocr-detection-pickup'),
                  data=message)
 
 
