@@ -1,8 +1,6 @@
-import os
-
 from google.cloud import pubsub
 
-from message import pack_message
+from message import pack_message, topic_res_name
 
 
 def process_image(image):
@@ -14,13 +12,9 @@ def process_image(image):
 
 
 def publish(message):
-    project = os.getenv('PROJECT')
-    topic_id = 'ocr_detection_pickup'
-
-    topic_res_name = f"projects/{project}/topics/{topic_id}"
-
-    pubsub.PublisherClient().publish(topic=topic_res_name,
-                                     data=message)
+    pubsub.PublisherClient() \
+        .publish(topic=topic_res_name('ocr_detection_pickup'),
+                 data=message)
 
 
 def process_publish(image, filename):

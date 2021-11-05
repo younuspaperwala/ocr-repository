@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 
 
 def pack_message(image, filename):
@@ -31,3 +32,9 @@ def extract_args_http(request):
     data = request.get_json(silent=True)['data']
 
     return data['filenames'], data['is_processing_on']
+
+
+def topic_res_name(topic_id):
+    project = os.getenv('PROJECT')
+
+    return f"projects/{project}/topics/{topic_id}"

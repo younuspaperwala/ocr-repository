@@ -3,17 +3,14 @@ import os
 
 from google.cloud import storage, pubsub
 
-from message import pack_message
+from message import pack_message, topic_res_name
 
 
 def select_publish_topic(is_processing_on):
-
-    project = os.getenv('PROJECT')
-
     topic_id = 'ocr-process-pickup' if is_processing_on \
         else 'ocr_detection_pickup'
 
-    return f"projects/{project}/topics/{topic_id}"
+    return topic_res_name(topic_id)
 
 
 def load_input(filename):
