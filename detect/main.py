@@ -1,6 +1,6 @@
 from google.cloud import vision, storage
 
-from message_packing.message_packing import unpack_message
+import message_packing.message_packing as mp
 
 
 def text_detection(image):
@@ -26,7 +26,7 @@ def store_output(bucket, filename, text):
 
 def run_ocr(event):
     # Extract the image and arguments from the message
-    image, bucket, filename = unpack_message(event)
+    image, bucket, filename = mp.unpack_message(event)
 
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
