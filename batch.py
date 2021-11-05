@@ -1,16 +1,8 @@
 import threading
-import base64
-import json
 
 from google.cloud import storage, pubsub
 
-
-def pack_message(image, bucket, filename):
-    message = {'image': base64.b64encode(image),
-               'bucket': bucket,
-               'filename': filename}
-
-    return json.dumps(message).encode('utf-8')
+from message import pack_message
 
 
 # Request format may be specific to Google
@@ -31,7 +23,7 @@ def load_and_publish(bucket, filename, is_processing_on):
         .blob(f"img/{filename}") \
         .download_as_bytes()
 
-    # Pack image and arguments into a message data object
+    # Pack image and arguments into a message_ data object
     message_data = pack_message(image, bucket, filename)
 
     pubsub.PublisherClient().publish(topic=select_publish_topic(is_processing_on),

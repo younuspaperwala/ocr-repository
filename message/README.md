@@ -1,1 +1,0 @@
-Message packaging for pubsub communications between functions in the ocr-orionlowy project
