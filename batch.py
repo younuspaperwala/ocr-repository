@@ -10,13 +10,13 @@ def select_publish_topic(is_processing_on):
         else 'ocr_detection_pickup'
 
 
-def load_and_publish(bucket, filename, is_processing_on):
+def handle_image(bucket, filename, is_processing_on):
     # Load image from bucket
     image = storage.Client().get_bucket(bucket) \
         .blob(f"img/{filename}") \
         .download_as_bytes()
 
-    # Pack image and arguments into a message_ data object
+    # Pack image and arguments into a message data object
     message_data = pack_message(image, bucket, filename)
 
     pubsub.PublisherClient().publish(topic=select_publish_topic(is_processing_on),
@@ -25,7 +25,7 @@ def load_and_publish(bucket, filename, is_processing_on):
 
 def start_batch(bucket, filenames, is_processing_on):
     # Create threads to process batch
-    threads = [threading.Thread(target=load_and_publish,
+    threads = [threading.Thread(target=handle_image,
                                 args=(bucket, filename, is_processing_on))
                for filename in filenames]
 
