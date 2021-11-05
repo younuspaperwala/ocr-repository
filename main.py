@@ -10,11 +10,11 @@ def batch_entry(request):
         *msg.extract_args_http(request))
 
 
-def process_entry(event):
+def process_entry(event, context):
     return process.process_publish(
         *msg.unpack_message(event))
 
 
-def detect_entry(event):
+def detect_entry(event, context):
     return detect.run_ocr(
         *msg.unpack_message(event))
