@@ -8,6 +8,9 @@ The main.py script contains three entry points, one for each of three Google Clo
 * process: triggered by Pub/Sub message. Runs custom image pre-processing (*currently does nothing*)
 * detect: triggered by Pub/Sub message. Sends images to Vision API for OCR and stores detected text in bucket.
 
+Another file contains helper code, not particular to a function:
+* message.py
+
 The code is configured to reference several platform-specific and implementation-specific details:
 * Argument and data structure formats for Google Cloud services such as Pub/Sub, Storage, and Vision.
 * *Environment variables*. Other implementations should set these up on the serverless compute unit's settings.
