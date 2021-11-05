@@ -1,15 +1,20 @@
 import batch
-import process
 import detect
+import message as msg
+import process
 
 
+# Request format may be specific to Google
 def batch_entry(request):
-    return batch.start_batch(request)
+    return batch.start_batch(
+        *msg.extract_args_http(request))
 
 
 def process_entry(event):
-    return process.process_publish(event)
+    return process.process_publish(
+        *msg.unpack_message(event))
 
 
 def detect_entry(event):
-    return detect.run_ocr(event)
+    return detect.run_ocr(
+        *msg.unpack_message(event))

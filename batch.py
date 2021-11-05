@@ -5,13 +5,6 @@ from google.cloud import storage, pubsub
 from message import pack_message
 
 
-# Request format may be specific to Google
-def extract_arguments(request):
-    data = request.get_json(silent=True)['data']
-
-    return data['bucket'], data['filenames'], data['is_processing_on']
-
-
 def select_publish_topic(is_processing_on):
     return 'ocr-process-pickup' if is_processing_on \
         else 'ocr_detection_pickup'
@@ -30,10 +23,7 @@ def load_and_publish(bucket, filename, is_processing_on):
                                      data=message_data)
 
 
-def start_batch(request):
-    # Extract the arguments
-    bucket, filenames, is_processing_on = extract_arguments(request)
-
+def start_batch(bucket, filenames, is_processing_on):
     # Create threads to process batch
     threads = [threading.Thread(target=load_and_publish,
                                 args=(bucket, filename, is_processing_on))

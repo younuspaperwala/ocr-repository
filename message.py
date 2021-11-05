@@ -17,3 +17,9 @@ def unpack_message(event):
     image = base64.b64decode(message['image'])
 
     return image, message['bucket'], message['filename']
+
+
+def extract_args_http(request):
+    data = request.get_json(silent=True)['data']
+
+    return data['bucket'], data['filenames'], data['is_processing_on']

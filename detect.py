@@ -1,7 +1,5 @@
 from google.cloud import vision, storage
 
-from message import unpack_message
-
 
 def text_detection(image):
     # Call Vision API
@@ -24,10 +22,7 @@ def store_output(bucket, filename, text):
         .upload_from_string(text)
 
 
-def run_ocr(event):
-    # Extract the image and arguments from the message_
-    image, bucket, filename = unpack_message(event)
-
+def run_ocr(image, bucket, filename):
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
 

@@ -1,6 +1,6 @@
 from google.cloud import pubsub
 
-from message import pack_message, unpack_message
+from message import pack_message
 
 
 def process_image(image):
@@ -11,10 +11,7 @@ def process_image(image):
     return image
 
 
-def process_publish(event):
-    # Extract the image and arguments from the message_
-    image, bucket, filename = unpack_message(event)
-
+def process_publish(image, bucket, filename):
     # Process the image
     processed_image = process_image(image)
 
