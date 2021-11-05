@@ -1,6 +1,6 @@
 from google.cloud import pubsub
 
-from message_package import unpack_message, pack_message
+from message_packing.message_packing import unpack_message, pack_message
 
 
 def process_image(image):

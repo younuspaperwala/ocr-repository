@@ -1,14 +1,9 @@
 import base64
 import json
 
-from altchars import base64_altchars
-
 
 def pack_message(image, bucket, filename):
-
-    print(image)
-
-    message = {'image': base64.b64encode(image, base64_altchars),
+    message = {'image': base64.b64encode(image),
                'bucket': bucket,
                'filename': filename}
 
@@ -19,6 +14,6 @@ def unpack_message(event):
     message_data = base64.b64decode(event["data"]).decode("utf-8")
     message = json.loads(message_data)
 
-    image = base64.b64decode(message['image'], base64_altchars)
+    image = base64.b64decode(message['image'])
 
     return image, message['bucket'], message['filename']
