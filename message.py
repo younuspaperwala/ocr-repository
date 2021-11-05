@@ -2,13 +2,12 @@ import base64
 import json
 
 
-def pack_message(image, bucket, filename):
+def pack_message(image, filename):
     # Convert the image to a string in base64 format
     image_str = base64.b64encode(image).decode('ascii')
 
     # Package the image along with other arguments
     message = {'image': image_str,
-               'bucket': bucket,
                'filename': filename}
 
     # Convert the complete package into a binary object containing JSON
@@ -25,10 +24,10 @@ def unpack_message(event):
     # Get the image from the coded string
     image = base64.b64decode(image_str.encode('ascii'))
 
-    return image, message['bucket'], message['filename']
+    return image, message['filename']
 
 
 def extract_args_http(request):
     data = request.get_json(silent=True)['data']
 
-    return data['bucket'], data['filenames'], data['is_processing_on']
+    return data['filenames'], data['is_processing_on']
