@@ -2,7 +2,7 @@ import threading
 
 from google.cloud import storage, pubsub
 
-import message_packing.message_packing as mp
+from message.message import message as mp
 
 
 # Request format may be specific to Google

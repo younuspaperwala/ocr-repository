@@ -1,6 +1,6 @@
 from google.cloud import vision, storage
 
-import message_packing.message_packing as mp
+from message.message import message as mp
 
 
 def text_detection(image):

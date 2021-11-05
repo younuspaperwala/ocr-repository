@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: message
+Version: 0.0.1
+Summary: message packaging for pubsub communications between functions in the ocr-orionlowy project
+Home-page: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+Message packaging for pubsub communications between functions in the ocr-orionlowy project
+
