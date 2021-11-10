@@ -1,8 +1,15 @@
-import json
+from functools import reduce
 import os
 
 from google.cloud import vision, storage
 from google.cloud.vision_v1 import EntityAnnotation
+
+
+def format_response(text_detection_response):
+    text_json_list = [EntityAnnotation.to_json(a)
+                      for a in text_detection_response.text_annotations]
+
+    return reduce(lambda a, b: a + ',\n' + b, text_json_list)
 
 
 def text_detection(image):
@@ -10,10 +17,7 @@ def text_detection(image):
     text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)
 
     # Export as JSON string
-    text_json = '[\n' + str([(EntityAnnotation.to_json(a) + '\n')
-                             for a in text_detection_response.text_annotations]) + ']'
-
-    return text_json
+    return format_response(text_detection_response)
 
 
 def store_output(filename, text):
