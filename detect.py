@@ -2,6 +2,7 @@ import json
 import os
 
 from google.cloud import vision, storage
+from google.cloud.vision_v1 import AnnotateImageResponse
 
 
 def text_detection(image):
@@ -9,7 +10,7 @@ def text_detection(image):
     text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)
 
     # Export as JSON string
-    text_json = json.dumps(text_detection_response)
+    text_json = AnnotateImageResponse.to_json(text_detection_response)
 
     return text_json
 
