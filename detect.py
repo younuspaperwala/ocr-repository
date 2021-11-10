@@ -11,7 +11,7 @@ def text_detection(image):
 
     # Export as JSON string
     text_json = '[\n' + str([(EntityAnnotation.to_json(a) + '\n')
-                             for a in text_detection_response["textAnnotations"]]) + ']'
+                             for a in text_detection_response.textAnnotations]) + ']'
 
     return text_json
 
