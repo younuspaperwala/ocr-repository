@@ -2,7 +2,7 @@ import json
 import os
 
 from google.cloud import vision, storage
-from google.cloud.vision_v1 import AnnotateImageResponse
+from google.cloud.vision_v1 import EntityAnnotation
 
 
 def text_detection(image):
@@ -10,7 +10,8 @@ def text_detection(image):
     text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)
 
     # Export as JSON string
-    text_json = AnnotateImageResponse.to_json(text_detection_response)
+    text_json = '[\n' + str([(EntityAnnotation.to_json(a) + '\n')
+                             for a in text_detection_response["textAnnotations"]]) + ']'
 
     return text_json
 
@@ -35,5 +36,3 @@ def run_ocr(image, filename):
     store_output(filename, text)
 
     return "Stored OCR text."
-
-
