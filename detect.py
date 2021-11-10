@@ -1,10 +1,17 @@
+import json
 import os
 
 from google.cloud import vision, storage
 
 
 def text_detection(image):
-    return vision.ImageAnnotatorClient().text_detection(image=image)
+    # Call Vision API
+    text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)
+
+    # Export as JSON string
+    text_json = json.dumps(text_detection_response)
+
+    return text_json
 
 
 def store_output(filename, text):
