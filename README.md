@@ -1,7 +1,7 @@
 OCR Pipeline with swappable image pre-processing
 ------------------------------------------------
 
-This code runs with Google Cloud Functions. Please see requirements.txt for dependencies from the Google Cloud platform.
+The code in the /google folder runs with Google Cloud Functions. Please see requirements.txt for dependencies from the Google Cloud platform.
 
 The main.py script contains three entry points, one for each of three Google Cloud Functions (defined separately in a .py file of the same name).
 * batch: triggered by HTTP request. Loads images from storage bucket and fans them out into threads.
