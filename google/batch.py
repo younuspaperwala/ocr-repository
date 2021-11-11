@@ -1,5 +1,6 @@
 import threading
 import os
+from datetime import datetime
 
 from google.cloud import storage, pubsub
 
@@ -13,6 +14,10 @@ def select_publish_topic(is_processing_on):
     return topic_res_name(topic_id)
 
 
+def modify_filename(filename, date_time, is_processing_on):
+    return f"{filename[:-4]}_{date_time}_{is_processing_on}"
+
+
 def load_input(filename):
     bucket = os.getenv('BUCKET')
 
@@ -21,9 +26,12 @@ def load_input(filename):
         .download_as_bytes()
 
 
-def handle_image(filename, is_processing_on):
+def handle_image(filename, batch_start_time, is_processing_on):
     # Load image from bucket
     image = load_input(filename)
+
+    # Modify filename by removing extension and adding time stamp and flags
+    filename = modify_filename(filename, batch_start_time, is_processing_on)
 
     # Pack image and arguments into a message data object
     message_data = pack_message(image, filename)
@@ -33,9 +41,12 @@ def handle_image(filename, is_processing_on):
 
 
 def start_batch(filenames, is_processing_on):
+    # Record current date and time to stamp output files
+    batch_start_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')  # e.g. 2021-11-30_11-30-00
+
     # Create threads to process batch
     threads = [threading.Thread(target=handle_image,
-                                args=(filename, is_processing_on))
+                                args=(filename, batch_start_time, is_processing_on))
                for filename in filenames]
 
     # Start threads
