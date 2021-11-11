@@ -27,7 +27,7 @@ def cv_import(image):
 
 
 def cv_export(processed_cv_image):
-    return cv2.imencode('.png', processed_cv_image, cv2.IMWRITE_PNG_BILEVEL)
+    return cv2.imencode('.png', processed_cv_image, cv2.cv.CV_IMWRITE_PNG_BILEVEL)
 
 
 def process_image(cv_image, param_set='A'):
