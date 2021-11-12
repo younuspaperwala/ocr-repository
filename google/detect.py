@@ -27,7 +27,7 @@ def publish(message):
                  data=message)
 
 
-def run_ocr(image, filename):
+def run_ocr(image, filename, approach):
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
 
@@ -35,7 +35,7 @@ def run_ocr(image, filename):
     text = text_detection(request_image)
 
     # Re-package the image and arguments and publish to Pub/Sub
-    message = pack_text_message(text, filename)
+    message = pack_text_message(text, filename, approach)
     publish(message)
 
     return "Detected text and published to next step."

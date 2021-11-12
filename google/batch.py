@@ -14,8 +14,8 @@ def select_publish_topic(is_processing_on):
     return topic_res_name(topic_id)
 
 
-def modify_filename(filename, date_time, is_processing_on):
-    return f"{date_time}_{is_processing_on}/{filename[:-4]}"
+def modify_filename(filename, date_time):
+    return f"{date_time}/{filename[:-4]}"
 
 
 def load_input(filename):
@@ -31,10 +31,10 @@ def handle_image(filename, batch_start_time, is_processing_on):
     image = load_input(filename)
 
     # Modify filename by removing extension and adding time stamp and flags
-    filename = modify_filename(filename, batch_start_time, is_processing_on)
+    filename = modify_filename(filename, batch_start_time)
 
     # Pack image and arguments into a message data object
-    message_data = pack_message(image, filename)
+    message_data = pack_message(image, filename, str(is_processing_on))
 
     pubsub.PublisherClient().publish(topic=select_publish_topic(is_processing_on),
                                      data=message_data)

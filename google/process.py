@@ -30,7 +30,7 @@ def cv_export(processed_cv_image):
     return cv2.imencode('.png', processed_cv_image, [int(cv2.IMWRITE_PNG_BILEVEL), 1])[1]
 
 
-def process_image(cv_image, approach='A'):
+def process_image(cv_image, approach):
     """
     Add image processing steps here!!
     """
@@ -70,17 +70,14 @@ def publish(message):
                  data=message)
 
 
-def process_publish(image, filename):
-    # Select processing approach
-    approach = filename[-1]
-
+def process_publish(image, filename, approach):
     # Process the image
     cv_image = cv_import(image)
     processed_cv_image = process_image(cv_image, approach)
     processed_image = cv_export(processed_cv_image)
 
     # Re-package the image and arguments and publish to Pub/Sub
-    message = pack_message(processed_image, filename)
+    message = pack_message(processed_image, filename, approach)
     publish(message)
 
     return "Ran processing and published to next step."
