@@ -5,27 +5,34 @@ import os
 
 def pack_message(image, filename):
     # Convert the image to a string in base64 format
-    image_str = base64.b64encode(image).decode('ascii')
+    content_str = base64.b64encode(image).decode('ascii')
 
-    # Package the image along with other arguments
-    message = {'image': image_str,
+    return pack_text_message(content_str, filename)
+
+
+def unpack_message(event):
+    content_str, filename = unpack_text_message(event)
+
+    # Get the image from the coded string
+    image = base64.b64decode(content_str.encode('ascii'))
+
+    return image, filename
+
+
+def pack_text_message(text, filename):
+    message = {'content': text,
                'filename': filename}
 
     # Convert the complete package into a binary object containing JSON
     return json.dumps(message).encode('utf-8')
 
 
-def unpack_message(event):
+def unpack_text_message(event):
     # Unpack the binary JSON object
     message_data = base64.b64decode(event["data"])
     message = json.loads(message_data.decode("utf-8"))
 
-    image_str = message['image']
-
-    # Get the image from the coded string
-    image = base64.b64decode(image_str.encode('ascii'))
-
-    return image, message['filename']
+    return message['content'], message['filename']
 
 
 def extract_args_http(request):

@@ -3,7 +3,7 @@ from functools import reduce
 from google.cloud import vision, pubsub
 from google.cloud.vision_v1 import EntityAnnotation
 
-from message import topic_res_name, pack_message
+from message import topic_res_name, pack_text_message
 
 
 def format_response(text_detection_response):
@@ -35,7 +35,7 @@ def run_ocr(image, filename):
     text = text_detection(request_image)
 
     # Re-package the image and arguments and publish to Pub/Sub
-    message = pack_message(text, filename)
+    message = pack_text_message(text, filename)
     publish(message)
 
     return "Detected text and published to next step."

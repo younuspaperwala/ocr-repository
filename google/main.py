@@ -22,4 +22,4 @@ def detect_entry(event, context):
 
 def store_entry(event, context):
     return store.store_output(
-        *msg.unpack_message(event))
+        *msg.unpack_text_message(event))
