@@ -1,10 +1,9 @@
 from functools import reduce
-import os
 
-from google.cloud import vision, storage, pubsub
+from google.cloud import vision, pubsub
 from google.cloud.vision_v1 import EntityAnnotation
 
-from message import topic_res_name
+from message import topic_res_name, pack_message
 
 
 def format_response(text_detection_response):
@@ -28,15 +27,6 @@ def publish(message):
                  data=message)
 
 
-def store_output(filename, text):
-    bucket = os.getenv('BUCKET')
-
-    return storage.Client() \
-        .get_bucket(bucket) \
-        .blob(f"output/{filename}.txt") \
-        .upload_from_string(text)
-
-
 def run_ocr(image, filename):
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
@@ -44,7 +34,8 @@ def run_ocr(image, filename):
     # Detect the text
     text = text_detection(request_image)
 
-    # Store the text in an output file
-    store_output(filename, text)
+    # Re-package the image and arguments and publish to Pub/Sub
+    message = pack_message(text, filename)
+    publish(message)
 
-    return "Stored OCR text."
+    return "Detected text and published to next step."

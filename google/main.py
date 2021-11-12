@@ -2,9 +2,9 @@ import batch
 import detect
 import message as msg
 import process
+import store
 
 
-# Request format may be specific to Google
 def batch_entry(request):
     return batch.start_batch(
         *msg.extract_args_http(request))
@@ -17,4 +17,9 @@ def process_entry(event, context):
 
 def detect_entry(event, context):
     return detect.run_ocr(
+        *msg.unpack_message(event))
+
+
+def store_entry(event, context):
+    return store.store_output(
         *msg.unpack_message(event))
