@@ -15,7 +15,7 @@ def select_publish_topic(is_processing_on):
 
 
 def modify_filename(filename, date_time, is_processing_on):
-    return f"{filename[:-4]}_{date_time}_{is_processing_on}"
+    return f"{filename[:-4]}.{date_time}_{is_processing_on}"
 
 
 def load_input(filename):
