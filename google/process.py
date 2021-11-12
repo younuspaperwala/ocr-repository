@@ -44,10 +44,12 @@ def process_image(cv_image, approach):
     # Thresholding
     if rgb_threshold:
         channels = cv2.split(cv_image)
-        for i in range(len(channels)):
-            channels[i] = cv2.GaussianBlur(channels[i], (gauss_kernel_size, gauss_kernel_size), 0)
-            channels[i] = cv2.adaptiveThreshold(channels[i], 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
+        channels = [cv2.GaussianBlur(channel, (gauss_kernel_size, gauss_kernel_size), 0)
+                    for channel in channels]
+        channels = [cv2.adaptiveThreshold(channel, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
                                                 thresh_window_size, thresh_C)
+                    for channel in channels]
+
         thresholded_image = cv2.cvtColor(cv2.merge(channels), cv2.COLOR_RGB2GRAY)
 
     else:
