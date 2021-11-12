@@ -1,8 +1,10 @@
 from functools import reduce
 import os
 
-from google.cloud import vision, storage
+from google.cloud import vision, storage, pubsub
 from google.cloud.vision_v1 import EntityAnnotation
+
+from message import topic_res_name
 
 
 def format_response(text_detection_response):
@@ -18,6 +20,12 @@ def text_detection(image):
 
     # Export as JSON string
     return format_response(text_detection_response)
+
+
+def publish(message):
+    pubsub.PublisherClient() \
+        .publish(topic=topic_res_name('ocr-store-pickup'),
+                 data=message)
 
 
 def store_output(filename, text):
