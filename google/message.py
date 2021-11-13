@@ -39,7 +39,9 @@ def unpack_text_message(event):
 def extract_args_http(request):
     data = request.get_json(silent=True)['data']
 
-    return data['filenames'], data['is_processing_on']
+    approach = data['approach'] if ('approach' in data) and data['is_processing_on'] else {}
+
+    return data['filenames'], data['is_processing_on'], approach
 
 
 def topic_res_name(topic_id):
