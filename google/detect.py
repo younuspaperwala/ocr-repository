@@ -24,7 +24,7 @@ def text_detection(image):
     return format_response(text_detection_response)
 
 
-def run_ocr(image, filename):
+def run_ocr(image, filename, approach):
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
 
