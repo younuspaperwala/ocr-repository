@@ -1,9 +1,9 @@
 from functools import reduce
 
-from google.cloud import vision, pubsub
+from google.cloud import vision
 from google.cloud.vision_v1 import EntityAnnotation
 
-from message import topic_res_name, pack_text_message
+from store import store_output
 
 
 def format_response(text_detection_response):
@@ -21,12 +21,6 @@ def text_detection(image):
     return format_response(text_detection_response)
 
 
-def publish(message):
-    pubsub.PublisherClient() \
-        .publish(topic=topic_res_name('ocr-store-pickup'),
-                 data=message)
-
-
 def run_ocr(image, filename):
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
@@ -34,8 +28,8 @@ def run_ocr(image, filename):
     # Detect the text
     text = text_detection(request_image)
 
-    # Re-package the image and arguments and publish to Pub/Sub
-    message = pack_text_message(text, filename)
-    publish(message)
+    # Store the output
+    print(filename)
+    store_output(text, filename)
 
     return "Detected text and published to next step."
