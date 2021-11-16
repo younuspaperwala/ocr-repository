@@ -10,6 +10,9 @@ def format_response(text_detection_response):
     text_json_list = [EntityAnnotation.to_json(a)
                       for a in text_detection_response.text_annotations]
 
+    if not text_json_list:
+        return '[]'
+
     return '[\n' + reduce(lambda a, b: a + ',\n' + b, text_json_list) + '\n]'
 
 

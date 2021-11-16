@@ -1,10 +1,9 @@
-import json
 import os
 
 from google.cloud import storage
 
 
-def store_output(text, filename, approach):
+def store_output(text, filename):
     bucket = os.getenv('BUCKET')
 
     return storage.Client() \
